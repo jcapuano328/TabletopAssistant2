@@ -38,7 +38,8 @@ fun DiceSet(
                     .size(40.dp)
                 ,
                 onDieClicked = onDieClicked,
-                backgroundColor = dieConfigs[i].backgroundColor,
+                sides = 6,
+                dieColor = dieConfigs[i].backgroundColor,
                 dotColor = dieConfigs[i].dotColor,
                 dieValue = dieValues[i]
             )

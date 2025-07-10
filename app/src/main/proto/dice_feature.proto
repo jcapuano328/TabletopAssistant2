@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option java_package = "com.ica.tabletopassistant.data.dice";
+option java_multiple_files = true;
+
+message Die {
+  int32 sides = 1;
+  string die_color = 2;
+  string dot_color = 3;
+  int32 current_value = 4;
+  bool break_after = 5;
+}
+
+message DiceFeatureConfig {
+  bool is_enabled = 1;
+  bool is_one_based = 2;
+  repeated Die dice = 3;
+}

@@ -25,7 +25,8 @@ import androidx.compose.ui.unit.dp
 fun Die(
     dieNumber: Int,
     onDieClicked: (Int) -> Unit,
-    backgroundColor: Color,
+    sides: Int,
+    dieColor: Color,
     dotColor: Color,
     modifier: Modifier = Modifier,
     dieValue: Int
@@ -35,12 +36,13 @@ fun Die(
             //.sizeIn(minWidth = 64.dp, minHeight = 64.dp)
             .aspectRatio(1f)
             //.border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(1.dp))
-            //.background(backgroundColor, shape = RoundedCornerShape(1.dp))
+            //.background(dieColor, shape = RoundedCornerShape(1.dp))
             .padding(1.dp),
         contentAlignment = Alignment.Center
     ) {
         DieRenderer(
-            backgroundColor = backgroundColor,
+            sides = sides,
+            dieColor = dieColor,
             dotColor = dotColor,
             value = dieValue,
             modifier = modifier
@@ -53,7 +55,8 @@ fun Die(
 @Composable
 fun DieRenderer(
     value: Int,            // The face value (1-6)
-    backgroundColor: Color,
+    sides: Int,            // The number of sides (e.g., 6 for a regular die)
+    dieColor: Color,
     dotColor: Color,
     modifier: Modifier = Modifier
 ) {
@@ -80,7 +83,7 @@ fun DieRenderer(
         //println("DieRenderer: value = $value, size = $size, dotRadius = $dotRadius")
 
         drawRoundRect(
-            color = backgroundColor,
+            color = dieColor,
             size = Size(size, size),
             cornerRadius = CornerRadius(cornerRadius, cornerRadius)
         )
@@ -108,7 +111,8 @@ fun PreviewDie() {
         modifier = Modifier.size(40.dp),
         dieNumber = 1,
         onDieClicked = { die -> value = die },
-        backgroundColor = Color.White,
+        sides = 6,
+        dieColor = Color.White,
         dotColor = Color.Black,
         dieValue = value
     )

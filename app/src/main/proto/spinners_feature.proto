@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option java_package = "com.ica.tabletopassistant.data.spinners";
+option java_multiple_files = true;
+
+message SpinnersFeatureConfig {
+  bool is_enabled = 1;
+  int32 number = 2;
+  bool follow_dice = 3;
+  bool calc_difference = 4;
+  bool show_calculator = 5;
+  repeated int32 values = 6;
+}

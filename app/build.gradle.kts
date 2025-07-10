@@ -2,6 +2,11 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.protobuf) // Apply the Protobuf plugin
+    id("com.google.devtools.ksp")
+    id("com.google.dagger.hilt.android")
+
+    kotlin("kapt")
 }
 
 android {
@@ -43,6 +48,21 @@ android {
     }
 }
 
+protobuf {
+    protoc {
+        // Specify the Protobuf compiler artifact
+        artifact = libs.protobuf.protoc.get().toString()
+    }
+    generateProtoTasks {
+        all().forEach { task ->
+            task.builtins {
+                create("java") { option("lite") }
+                //create("kotlin") { option("lite") }
+            }
+        }
+    }
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -67,4 +87,12 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+    implementation(libs.androidx.datastore)
+    implementation(libs.protobuf.javalite)
+    implementation(libs.protobuf.kotlin.lite)
+
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 }
