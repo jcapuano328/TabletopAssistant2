@@ -41,6 +41,11 @@ class SpinnersSettingsViewModel @Inject constructor(
         }
     }
 
+    fun reset() {
+        viewModelScope.launch {
+            repository.reset()
+        }
+    }
 
     fun setIsEnabled(enabled: Boolean) {
         viewModelScope.launch { repository.setIsEnabled(enabled) }

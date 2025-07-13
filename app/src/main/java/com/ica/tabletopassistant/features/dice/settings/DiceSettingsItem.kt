@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ica.tabletopassistant.ui.ColorDropdown
@@ -21,6 +22,31 @@ import com.ica.tabletopassistant.ui.DieColorMap
 
 @Composable
 fun DieSettingsItem(
+    modifier: Modifier = Modifier,
+    die: Die,
+    onDieChanged: (Die) -> Unit,
+    onRemove: () -> Unit,
+    enabled: Boolean = true
+) {
+    if (die.isSpacer) {
+        DieSettingsItemSpacer(
+            modifier = modifier,
+            onRemove = onRemove,
+            enabled = enabled
+        )
+    } else {
+        DieSettingsItemDie(
+            modifier = modifier,
+            die = die,
+            onDieChanged = onDieChanged,
+            onRemove = onRemove,
+            enabled = enabled
+        )
+    }
+}
+
+@Composable
+fun DieSettingsItemDie(
     modifier: Modifier = Modifier,
     die: Die,
     onDieChanged: (Die) -> Unit,
@@ -36,7 +62,7 @@ fun DieSettingsItem(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            //.background(Color.Blue)
+        //.background(Color.Blue)
     ) {
 
         // Sides - Die Color - Dot Color - Break After - Die Preview - Remove
@@ -106,34 +132,6 @@ fun DieSettingsItem(
             )
         }
 
-        // --- BREAK AFTER ---
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.weight(0.5f)
-            //.background(Color.Magenta)
-        ) {
-            //Text("Break After", style = MaterialTheme.typography.labelSmall)
-            /*
-            Switch(
-                checked = die.breakAfter,
-                onCheckedChange = { checked ->
-                    onDieChanged(die.toBuilder().setBreakAfter(checked).build())
-                }
-            )
-            */
-            IconToggleButton(
-                checked = die.breakAfter,
-                onCheckedChange = { checked ->
-                    onDieChanged(die.toBuilder().setBreakAfter(checked).build())
-                },
-                enabled = enabled
-            ) {
-                val icon = if (die.breakAfter) Icons.Default.KeyboardReturn else Icons.Default.KeyboardArrowRight
-                Icon(imageVector = icon, contentDescription = "Break After")
-            }
-
-        }
-
         // --- DIE PREVIEW ---
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -173,6 +171,53 @@ fun DieSettingsItem(
     }
 }
 
+@Composable
+fun DieSettingsItemSpacer(
+    modifier: Modifier = Modifier,
+    onRemove: () -> Unit,
+    enabled: Boolean = true
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+    ) {
+
+        // Spacer - Remove
+        // --- SPACER ---
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start,
+            modifier = Modifier.weight(5f)
+                .padding(start = 10.dp)
+            //.background(Color.Gray)
+        ) {
+            Text("SPACER", color = Color.Gray, style = MaterialTheme.typography.labelSmall)
+        }
+
+        // --- REMOVE BUTTON ---
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.weight(0.5f)
+            //.background(Color.Gray)
+        ) {
+            IconButton(
+                onClick = onRemove,
+                enabled = enabled
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete, // Replace with your asset
+                    contentDescription = "Remove Die",
+                    tint = MaterialTheme.colorScheme.error
+                )
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun PreviewDieSettingsItem() {
@@ -184,101 +229,46 @@ fun PreviewDieSettingsItem() {
                 .setDieColor("red")
                 .setDotColor("white")
                 .setCurrentValue(1)
-                .setBreakAfter(false)
                 .build()
         )
     }
 
-    DieSettingsItem(
-        die = dieState,
-        onDieChanged = { updatedDie ->
-            // When onDieChanged is called, update the remembered state
-            dieState = updatedDie
-        },
-        onRemove = {
-            // Handle remove action if needed for preview,
-            // for example, by logging or showing a placeholder
-            println("Remove button clicked in preview")
-        }
-    )
-}
+    var spacerState by remember {
+        mutableStateOf(
+            Die.newBuilder()
+                .setIsSpacer(true)
+                .build()
+        )
+    }
 
-
-
-/*
-@Composable
-fun DieSettingsItem(
-    die: Die,
-    onDieChanged: (Die) -> Unit,
-    onRemove: () -> Unit
-) {
-    val sides = remember(die.sides) { mutableStateOf(die.sides.toString()) }
-
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(8.dp)) {
-            OutlinedTextField(
-                value = sides.value,
-                onValueChange = {
-                    sides.value = it
-                    it.toIntOrNull()?.let { s ->
-                        onDieChanged(die.toBuilder().setSides(s).build())
-                    }
-                },
-                label = { Text("Sides") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            // Placeholder for color pickers
-            Text("Color: ${die.dieColor}, Dots: ${die.dotColor}")
-
-            Spacer(Modifier.height(4.dp))
-            Button(
-                onClick = onRemove,
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-            ) {
-                Text("Remove")
+    Column() {
+        DieSettingsItem(
+            die = dieState,
+            onDieChanged = { updatedDie ->
+                // When onDieChanged is called, update the remembered state
+                dieState = updatedDie
+            },
+            onRemove = {
+                // Handle remove action if needed for preview,
+                // for example, by logging or showing a placeholder
+                println("Remove die button clicked in preview")
             }
-        }
+        )
+
+        DieSettingsItem(
+            die = spacerState,
+            onDieChanged = { updatedDie ->
+                // When onDieChanged is called, update the remembered state
+                spacerState = updatedDie
+            },
+            onRemove = {
+                // Handle remove action if needed for preview,
+                // for example, by logging or showing a placeholder
+                println("Remove spacer button clicked in preview")
+            }
+        )
     }
+
 }
-*/
 
-/*
-Text("Die Color:")
-ColorPickerRow(
-    selectedColor = die.dieColor,
-    onColorSelected = { newColor ->
-        val updated = die.toBuilder().setDieColor(newColor).build()
-        onDieChanged(updated)
-    }
-)
 
-Spacer(Modifier.height(16.dp))
-
-Text("Dot Color:")
-ColorPickerRow(
-    selectedColor = die.dotColor,
-    onColorSelected = { newColor ->
-        val updated = die.toBuilder().setDotColor(newColor).build()
-        onDieChanged(updated)
-    }
-)
-*/
-
-/*
-@Preview(showBackground = true)
-@Composable
-fun PreviewDieSettingsItem() {
-    DieSettingsItem(
-        die = Die.newBuilder()
-            .setSides(6)
-            .setDieColor("red")
-            .setDotColor("white")
-            .setCurrentValue(1)
-            .setBreakAfter(false)
-            .build(),
-        onDieChanged = {},
-        onRemove = {}
-    )
-}
-*/

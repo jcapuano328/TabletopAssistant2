@@ -8,7 +8,7 @@ message Die {
   string die_color = 2;
   string dot_color = 3;
   int32 current_value = 4;
-  bool break_after = 5;
+  bool is_spacer = 5;
 }
 
 message DiceFeatureConfig {

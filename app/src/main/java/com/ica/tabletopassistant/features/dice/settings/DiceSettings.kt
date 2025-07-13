@@ -7,9 +7,11 @@ import androidx.compose.foundation.lazy.LazyColumn // Import LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed // Import itemsIndexed for LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Casino
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.KeyboardReturn
+import androidx.compose.material.icons.filled.SpaceBar
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
@@ -28,15 +30,28 @@ import com.ica.tabletopassistant.ui.ColorDropdown
 import com.ica.tabletopassistant.data.dice.Die
 import com.ica.tabletopassistant.ui.DieColorMap
 import com.ica.tabletopassistant.ui.PngIcon
+import com.ica.tabletopassistant.ui.theme.TabletopAssistantTheme
 
 @Composable
-fun DiceSettings(modifier: Modifier = Modifier, viewModel: DiceSettingsViewModel = hiltViewModel()) {
+fun DiceSettings(
+    modifier: Modifier = Modifier,
+    onRegisterReset: ((() -> Unit) -> Unit),
+    viewModel: DiceSettingsViewModel = hiltViewModel()
+) {
     val uiState by viewModel.uiState.collectAsState()
+
+    // Register once
+    LaunchedEffect(Unit) {
+        onRegisterReset {
+            viewModel.reset()
+        }
+    }
 
     DiceSettingsContent(
         modifier = modifier,
         state = uiState,
         onAddDie = viewModel::addDie,
+        onAddSpacer = viewModel::addSpacer,
         onRemoveDie = viewModel::removeDie,
         onUpdateDie = viewModel::updateDie,
         onToggleEnabled = viewModel::setEnabled,
@@ -49,6 +64,7 @@ fun DiceSettingsContent(
     modifier: Modifier = Modifier,
     state: DiceSettingsUiState,
     onAddDie: () -> Unit,
+    onAddSpacer: () -> Unit,
     onRemoveDie: (Int) -> Unit,
     onUpdateDie: (index: Int, updated: Die) -> Unit,
     onToggleEnabled: (Boolean) -> Unit,
@@ -104,12 +120,30 @@ fun DiceSettingsContent(
                 Text("One-Based")
             }
 
-            // -- ADD DIE --
+            // -- ADD DIE / SPACE --
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.End,
-                modifier = modifier.padding(end = 4.dp)
+                modifier = Modifier.padding(end = 4.dp)
             ) {
+                Button(
+                    onClick = onAddDie,
+                    enabled = state.isEnabled
+                ) {
+                    Icon(Icons.Default.Casino, contentDescription = "Add Die")
+                    //Spacer(modifier = Modifier.width(8.dp))
+                    //Text("Add Die")
+                }
+                Spacer(modifier = Modifier.width(4.dp))
+                Button(
+                    onClick = onAddSpacer,
+                    enabled = state.isEnabled
+                ) {
+                    Icon(Icons.Default.SpaceBar, contentDescription = "Add Spacer")
+                    //Spacer(modifier = Modifier.width(8.dp))
+                    //Text("Add Spacer")
+                }
+                /*
                 IconButton(
                     onClick = onAddDie,
                     enabled = state.isEnabled
@@ -118,13 +152,31 @@ fun DiceSettingsContent(
                 ) {
                     PngIcon(
                         resId = com.ica.tabletopassistant.R.drawable.add,
-                        desc = "Calculator",
+                        desc = "Add Die",
                         modifier = Modifier
                             .size(40.dp)
                         //.align(Alignment.Center)
                     )
                 }
                 //Text(text = "Add Die")
+
+                IconButton(
+                    onClick = onAddSpacer,
+                    enabled = state.isEnabled
+                    //modifier = Modifier
+                    //    .align(Alignment.Center)
+                ) {
+                    PngIcon(
+                        resId = com.ica.tabletopassistant.R.drawable.spacer,
+                        desc = "Add Space",
+                        modifier = Modifier
+                            .size(40.dp)
+                        //.align(Alignment.Center)
+                    )
+                }
+                //Text(text = "Add Spacer")
+                */
+
             }
         }
 
@@ -149,20 +201,10 @@ fun DiceSettingsContent(
                 style = TextStyle(color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 12.sp, textAlign = TextAlign.Center),
                 modifier = Modifier.weight(1f)
             )
-            Spacer(Modifier.weight(1.5f))
+            Spacer(Modifier.weight(1f))
         }
 
         // -- DICE --
-        /*
-        state.dice.forEachIndexed { index, die ->
-            DieSettingsItem(
-                die = die,
-                onDieChanged = { updated -> onUpdateDie(index, updated) },
-                onRemove = { onRemoveDie(index) }
-            )
-            //Spacer(Modifier.height(2.dp))
-        }
-        */
         // Use LazyColumn for the list of dice
         LazyColumn(modifier = Modifier.weight(1f)) { // Use weight to fill available space if needed
             itemsIndexed(state.dice) { index, die ->
@@ -172,7 +214,6 @@ fun DiceSettingsContent(
                     onRemove = { onRemoveDie(index) },
                     enabled = state.isEnabled
                 )
-                // Spacer(Modifier.height(2.dp)) // Spacers inside items might be less common, consider padding on the item itself
             }
         }
 
@@ -194,85 +235,62 @@ fun PreviewDiceSettings() {
                         .setDieColor("red")
                         .setDotColor("white")
                         .setCurrentValue(1)
-                        .setBreakAfter(false)
                         .build(),
                     Die.newBuilder()
                         .setSides(6)
                         .setDieColor("white")
                         .setDotColor("black")
                         .setCurrentValue(1)
-                        .setBreakAfter(true)
+                        .build(),
+                    Die.newBuilder()
+                        .setIsSpacer(true)
                         .build()
                 )
             )
         )
     }
 
-    DiceSettingsContent(
-        state = previewState,
-        onAddDie = {
-            // Create a new die and add it to the list
-            val newDie = Die.newBuilder()
-                .setSides(6) // Default values for a new die
-                .setDieColor("red")
-                .setDotColor("white")
-                .setCurrentValue(1)
-                .setBreakAfter(false)
-                .build()
-            previewState = previewState.copy(dice = previewState.dice + newDie)
-        },
-        onRemoveDie = { index ->
-            // Remove the die at the specified index
-            previewState = previewState.copy(dice = previewState.dice.filterIndexed { i, _ -> i != index })
-        },
-        onUpdateDie = { index, updatedDie ->
-            // Update the die at the specified index
-            val updatedDice = previewState.dice.toMutableList()
-            if (index in updatedDice.indices) {
-                updatedDice[index] = updatedDie
-            }
-            previewState = previewState.copy(dice = updatedDice)
-        },
-        onToggleEnabled = { isEnabled ->
-            // Toggle the isEnabled flag
-            previewState = previewState.copy(isEnabled = isEnabled)
-        },
-        onToggleOneBased = { isOneBased ->
-            // Toggle the isOneBased flag
-            previewState = previewState.copy(isOneBased = isOneBased)
-        }
-    )
-}
-
-/*
-@Preview(showBackground = true)
-@Composable
-fun PreviewDiceSettings() {
-    DiceSettingsContent(
-        state = DiceSettingsUiState(
-            isEnabled = true,
-            isOneBased = false,
-            dice = listOf(
-                Die.newBuilder()
-                    .setSides(6)
+    TabletopAssistantTheme {
+        DiceSettingsContent(
+            state = previewState,
+            onAddDie = {
+                // Create a new die and add it to the list
+                val newDie = Die.newBuilder()
+                    .setSides(6) // Default values for a new die
                     .setDieColor("red")
                     .setDotColor("white")
                     .setCurrentValue(1)
-                    .setBreakAfter(false)
-                    .build(),
-                Die.newBuilder()
-                    .setSides(6)
-                    .setDieColor("white")
-                    .setDotColor("black")
-                    .setCurrentValue(1)
-                    .setBreakAfter(true)
                     .build()
-            )
-        ),
-        onAddDie = {},
-        onRemoveDie = {},
-        onUpdateDie = { _, _ -> },
-        onToggleEnabled = {}
-    )
+                previewState = previewState.copy(dice = previewState.dice + newDie)
+            },
+            onAddSpacer = {
+                // Create a new spacer and add it to the list
+                val newSpacer = Die.newBuilder()
+                    .setIsSpacer(true)
+                    .build()
+                previewState = previewState.copy(dice = previewState.dice + newSpacer)
+            },
+            onRemoveDie = { index ->
+                // Remove the die at the specified index
+                previewState =
+                    previewState.copy(dice = previewState.dice.filterIndexed { i, _ -> i != index })
+            },
+            onUpdateDie = { index, updatedDie ->
+                // Update the die at the specified index
+                val updatedDice = previewState.dice.toMutableList()
+                if (index in updatedDice.indices) {
+                    updatedDice[index] = updatedDie
+                }
+                previewState = previewState.copy(dice = updatedDice)
+            },
+            onToggleEnabled = { isEnabled ->
+                // Toggle the isEnabled flag
+                previewState = previewState.copy(isEnabled = isEnabled)
+            },
+            onToggleOneBased = { isOneBased ->
+                // Toggle the isOneBased flag
+                previewState = previewState.copy(isOneBased = isOneBased)
+            }
+        )
+    }
 }
-*/

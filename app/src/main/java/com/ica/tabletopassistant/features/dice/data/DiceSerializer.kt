@@ -17,7 +17,7 @@ object DiceSerializer : Serializer<DiceFeatureConfig> {
                 .setDieColor("red")
                 .setDotColor("white")
                 .setCurrentValue(1)
-                .setBreakAfter(false)
+                .setIsSpacer(false)
                 .build()
         )
         .addDice(
@@ -26,6 +26,7 @@ object DiceSerializer : Serializer<DiceFeatureConfig> {
                 .setDieColor("white")
                 .setDotColor("black")
                 .setCurrentValue(1)
+                .setIsSpacer(false)
                 .build()
         )
         .build()

@@ -63,4 +63,26 @@ class DiceRepository @Inject constructor(
                 .build()
         }
     }
+
+    suspend fun addSpacer() {
+        dataStore.updateData { config ->
+            val newDie = Die.newBuilder()
+                .setSides(0)
+                .setDieColor("white")
+                .setDotColor("black")
+                .setCurrentValue(1)
+                .setIsSpacer(true)
+                .build()
+
+            config.toBuilder()
+                .addDice(newDie)
+                .build()
+        }
+    }
+
+    suspend fun reset() {
+        dataStore.updateData {
+            DiceFeatureConfig.getDefaultInstance()
+        }
+    }
 }

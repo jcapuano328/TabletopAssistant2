@@ -36,6 +36,12 @@ class DiceSettingsViewModel @Inject constructor(
         }
     }
 
+    fun reset() {
+        viewModelScope.launch {
+            repository.reset()
+        }
+    }
+
     fun setEnabled(enabled: Boolean) {
         viewModelScope.launch {
             repository.setIsEnabled(enabled)
@@ -65,6 +71,12 @@ class DiceSettingsViewModel @Inject constructor(
                 dieColor = "white",
                 dotColor = "black"
             )
+        }
+    }
+
+    fun addSpacer() {
+        viewModelScope.launch {
+            repository.addSpacer()
         }
     }
 

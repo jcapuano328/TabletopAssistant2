@@ -40,6 +40,7 @@ fun MainScreen() {
                     onClick = {
                         // Launch the current screen's FAB action
                         CoroutineScope(Dispatchers.Main).launch {
+                            println("MainScreen: FAB clicked")
                             fabAction()
                         }
                     }

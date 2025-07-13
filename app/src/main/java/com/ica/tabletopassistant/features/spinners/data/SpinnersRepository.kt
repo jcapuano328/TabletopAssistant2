@@ -1,6 +1,7 @@
 package com.ica.tabletopassistant.features.spinners.data
 
 import androidx.datastore.core.DataStore
+import com.ica.tabletopassistant.data.odds.OddsFeatureConfig
 import com.ica.tabletopassistant.data.spinners.SpinnersFeatureConfig
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -79,4 +80,11 @@ class SpinnersRepository @Inject constructor(
                 .build()
         }
     }
+
+    suspend fun reset() {
+        dataStore.updateData {
+            SpinnersFeatureConfig.getDefaultInstance()
+        }
+    }
+
 }

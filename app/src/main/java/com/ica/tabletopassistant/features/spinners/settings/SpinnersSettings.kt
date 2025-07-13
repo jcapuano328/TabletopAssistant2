@@ -15,10 +15,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ica.tabletopassistant.features.spinners.settings.SpinnersSettingsViewModel
+import com.ica.tabletopassistant.ui.theme.TabletopAssistantTheme
 
 @Composable
-fun SpinnersSettings(modifier: Modifier = Modifier, viewModel: SpinnersSettingsViewModel = hiltViewModel()) {
+fun SpinnersSettings(
+    modifier: Modifier = Modifier,
+    onRegisterReset: ((() -> Unit) -> Unit),
+    viewModel: SpinnersSettingsViewModel = hiltViewModel()
+) {
     val uiState by viewModel.uiState.collectAsState()
+
+    // Register once
+    LaunchedEffect(Unit) {
+        onRegisterReset {
+            viewModel.reset()
+        }
+    }
 
     SpinnersSettingsContent(
         modifier = modifier,
@@ -177,23 +189,24 @@ fun PreviewSpinnersSettings() {
             )
         )
     }
-
-    SpinnersSettingsContent(
-        state = previewState,
-        onToggleIsEnabled = { isEnabled ->
-            previewState = previewState.copy(isEnabled = isEnabled)
-        },
-        onUpdateNumber = { number ->
-            previewState = previewState.copy(number = number)
-        },
-        onToggleFollowDice = { followDice ->
-            previewState = previewState.copy(followDice = followDice)
-        },
-        onToggleShowDifference = { calcDifference ->
-            previewState = previewState.copy(calcDifference = calcDifference)
-        },
-        onToggleShowCalculator = { showCalculator ->
-            previewState = previewState.copy(showCalculator = showCalculator)
-        }
-    )
+    TabletopAssistantTheme {
+        SpinnersSettingsContent(
+            state = previewState,
+            onToggleIsEnabled = { isEnabled ->
+                previewState = previewState.copy(isEnabled = isEnabled)
+            },
+            onUpdateNumber = { number ->
+                previewState = previewState.copy(number = number)
+            },
+            onToggleFollowDice = { followDice ->
+                previewState = previewState.copy(followDice = followDice)
+            },
+            onToggleShowDifference = { calcDifference ->
+                previewState = previewState.copy(calcDifference = calcDifference)
+            },
+            onToggleShowCalculator = { showCalculator ->
+                previewState = previewState.copy(showCalculator = showCalculator)
+            }
+        )
+    }
 }

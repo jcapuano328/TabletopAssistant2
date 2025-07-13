@@ -1,6 +1,7 @@
 package com.ica.tabletopassistant.features.odds.data
 
 import androidx.datastore.core.DataStore
+import com.ica.tabletopassistant.data.dice.DiceFeatureConfig
 import com.ica.tabletopassistant.data.odds.OddsFeatureConfig
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -56,6 +57,12 @@ class OddsRepository @Inject constructor(
                 .setAttack(attack)
                 .setDefend(defend)
                 .build()
+        }
+    }
+
+    suspend fun reset() {
+        dataStore.updateData {
+            OddsFeatureConfig.getDefaultInstance()
         }
     }
 }

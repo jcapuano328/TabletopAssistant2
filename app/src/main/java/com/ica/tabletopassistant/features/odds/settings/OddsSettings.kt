@@ -16,10 +16,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ica.tabletopassistant.ui.theme.TabletopAssistantTheme
 
 @Composable
-fun OddsSettings(modifier: Modifier = Modifier, viewModel: OddsSettingsViewModel = hiltViewModel()) {
+fun OddsSettings(
+    modifier: Modifier = Modifier,
+    onRegisterReset: ((() -> Unit) -> Unit),
+    viewModel: OddsSettingsViewModel = hiltViewModel()
+) {
     val uiState by viewModel.uiState.collectAsState()
+
+    // Register once
+    LaunchedEffect(Unit) {
+        onRegisterReset {
+            viewModel.reset()
+        }
+    }
 
     OddsSettingsContent(
         modifier = modifier,
@@ -97,10 +109,6 @@ fun OddsSettingsContent(
                 horizontalArrangement = Arrangement.spacedBy(2.dp),
                 modifier = Modifier.weight(1f)
             ) {
-                /*Switch(
-                    checked = state.isRounded,
-                    onCheckedChange = onToggleIsRounded
-                )*/
                 Checkbox(
                     checked = state.isRounded,
                     onCheckedChange = onToggleIsRounded,
@@ -121,7 +129,7 @@ fun OddsSettingsContent(
                         onClick = {
                             onUpdateRoundingMode(option.value)
                         },
-                        enabled = state.isEnabled,
+                        enabled = state.isEnabled && state.isRounded,
                         colors = ButtonDefaults.outlinedButtonColors(
                             containerColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
                             contentColor = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface
@@ -148,32 +156,6 @@ data class ModeOption(
     val description: String
 )
 
-/*
-        if (state.isEnabled) {
-            Spacer(Modifier.height(16.dp))
-
-            OutlinedTextField(
-                value = config.attack.toString(),
-                onValueChange = {
-                    it.toFloatOrNull()?.let(viewModel::setAttack)
-                },
-                label = { Text("Attack Value") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(Modifier.height(8.dp))
-
-            OutlinedTextField(
-                value = config.defend.toString(),
-                onValueChange = {
-                    it.toFloatOrNull()?.let(viewModel::setDefend)
-                },
-                label = { Text("Defend Value") },
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
- */
-
 @Preview(showBackground = true)
 @Composable
 fun PreviewOddsSettings() {
@@ -191,16 +173,18 @@ fun PreviewOddsSettings() {
         )
     }
 
-    OddsSettingsContent(
-        state = previewState,
-        onToggleIsEnabled = { isEnabled ->
-            previewState = previewState.copy(isEnabled = isEnabled)
-        },
-        onToggleIsRounded = { isRounded ->
-            previewState = previewState.copy(isRounded = isRounded)
-        },
-        onUpdateRoundingMode = { mode ->
-            previewState = previewState.copy(roundingMode = mode)
-        }
-    )
+    TabletopAssistantTheme {
+        OddsSettingsContent(
+            state = previewState,
+            onToggleIsEnabled = { isEnabled ->
+                previewState = previewState.copy(isEnabled = isEnabled)
+            },
+            onToggleIsRounded = { isRounded ->
+                previewState = previewState.copy(isRounded = isRounded)
+            },
+            onUpdateRoundingMode = { mode ->
+                previewState = previewState.copy(roundingMode = mode)
+            }
+        )
+    }
 }
