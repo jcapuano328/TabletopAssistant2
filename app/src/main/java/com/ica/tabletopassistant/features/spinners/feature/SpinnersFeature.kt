@@ -8,15 +8,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ica.tabletopassistant.ui.CalculatorDialog
+import com.ica.tabletopassistant.ui.CalculatorDialogRequest
 
 @Composable
-fun SpinnersFeature(modifier: Modifier = Modifier, viewModel: SpinnersFeatureViewModel = hiltViewModel()) {
+fun SpinnersFeature(
+    modifier: Modifier = Modifier,
+    viewModel: SpinnersFeatureViewModel = hiltViewModel(),
+    showDialog: (initial: Float, onSetAttack: (Float) -> Unit, onSetDefend: (Float) -> Unit) -> Unit
+) {
     val uiState by viewModel.uiState.collectAsState()
 
     SpinnersFeatureContent(
         modifier = modifier,
         state = uiState,
-        onUpdateValues = viewModel::updateValues
+        onUpdateValues = { values ->
+            viewModel.updateValues(values)
+        },
+        onUpdateValueAt = { index, value ->
+            viewModel.updateValueAt(index, value)
+        },
+        showDialog = showDialog
     )
 }
 
@@ -24,7 +36,9 @@ fun SpinnersFeature(modifier: Modifier = Modifier, viewModel: SpinnersFeatureVie
 fun SpinnersFeatureContent(
     modifier: Modifier = Modifier,
     state: SpinnersFeatureUiState,
-    onUpdateValues: (List<Int>) -> Unit = {}
+    onUpdateValueAt: (Int, Int) -> Unit = { _, _ -> },
+    onUpdateValues: (List<Int>) -> Unit = {},
+    showDialog: (initial: Float, onSetAttack: (Float) -> Unit, onSetDefend: (Float) -> Unit) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -68,15 +82,16 @@ fun SpinnersFeatureContent(
                         enabled = state.isEnabled,
                         value = state.difference,
                         showCalculator = state.showCalculator,
-                        onSetLeft = {
-                            val newValues = state.values.toMutableList()
-                            newValues[0] = it
-                            onUpdateValues(newValues)
-                        },
-                        onSetRight = {
-                            val newValues = state.values.toMutableList()
-                            newValues[1] = it
-                            onUpdateValues(newValues)
+                        onShowCalculator = {
+                            showDialog(
+                                0f,//state.values[0].toFloat(),
+                                {
+                                    onUpdateValueAt(0, it.toInt())
+                                },
+                                {
+                                    onUpdateValueAt(1, it.toInt())
+                                }
+                            )
                         }
                     )
                 }
@@ -103,12 +118,56 @@ fun PreviewSpinnersFeature() {
         )
     }
 
+    var dialogRequest: CalculatorDialogRequest? by remember { mutableStateOf(null) }
+    val openDialog: (Float, (Float) -> Unit, (Float) -> Unit) -> Unit =
+        { initial, onSetAttack, onSetDefend ->
+            dialogRequest = CalculatorDialogRequest(initial, onSetAttack, onSetDefend)
+        }
+
     SpinnersFeatureContent(
         state = previewState,
+        onUpdateValueAt = { index, value ->
+            println("PreviewSpinnersFeature onUpdateValueAt: $index $value")
+            val newValues = previewState.values.toMutableList()
+            println("PreviewSpinnersFeature onUpdateValueAt oldValues: $newValues")
+            newValues[index] = value
+            println("PreviewSpinnersFeature onUpdateValueAt newValues: $newValues")
+
+
+            println("PreviewSpinnersFeature onUpdateValues current: ${previewState.values}")
+            previewState = previewState.copy(values = newValues)
+            if (newValues.size > 1 && previewState.calcDifference)
+                previewState = previewState.copy(difference = newValues[0] - newValues[1])
+            println("PreviewSpinnersFeature onUpdateValues updated: ${previewState.values}")
+
+        },
+
         onUpdateValues = { values ->
+            println("PreviewSpinnersFeature onUpdateValues: $values")
+            println("PreviewSpinnersFeature onUpdateValues current: ${previewState.values}")
             previewState = previewState.copy(values = values)
             if (values.size > 1 && previewState.calcDifference)
                 previewState = previewState.copy(difference = values[0] - values[1])
-        }
+            println("PreviewSpinnersFeature onUpdateValues updated: ${previewState.values}")
+        },
+        showDialog = openDialog
     )
+
+    dialogRequest?.let { req ->
+        CalculatorDialog(
+            Modifier.fillMaxSize(),
+            onSetAttack = { value ->
+                println("CalculatorDialog onSetAttack: $value, current: ${previewState.values}")
+                req.onSetAttack(value)
+            },
+            onSetDefend = { value ->
+                println("CalculatorDialog onSetDefend: $value, current: ${previewState.values}")
+                req.onSetDefend(value)
+            },
+            onDismissRequest = {
+                dialogRequest = null
+            }
+        )
+    }
+
 }

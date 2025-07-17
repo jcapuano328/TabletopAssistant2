@@ -17,9 +17,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ica.tabletopassistant.ui.InputNumeric
 import com.ica.tabletopassistant.ui.PngIcon
 import com.ica.tabletopassistant.ui.CalculatorDialog
+import com.ica.tabletopassistant.ui.theme.TabletopAssistantTheme
 
 @Composable
-fun OddsFeature(modifier: Modifier = Modifier, viewModel: OddsFeatureViewModel = hiltViewModel()) {
+fun OddsFeature(
+        modifier: Modifier = Modifier,
+        viewModel: OddsFeatureViewModel = hiltViewModel(),
+        showDialog: (initial: Float, onSetAttack: (Float) -> Unit, onSetDefend: (Float) -> Unit) -> Unit
+) {
     val uiState by viewModel.uiState.collectAsState()
 
     OddsFeatureContent(
@@ -27,6 +32,10 @@ fun OddsFeature(modifier: Modifier = Modifier, viewModel: OddsFeatureViewModel =
         state = uiState,
         onUpdateAttack = viewModel::setAttack,
         onUpdateDefend = viewModel::setDefend,
+        onShowCacluator = {
+            showDialog(/*uiState.attack*/0f, viewModel::setAttack, viewModel::setDefend)
+        }
+
     )
 }
 
@@ -35,10 +44,9 @@ fun OddsFeatureContent(
     modifier: Modifier = Modifier,
     state: OddsFeatureUiState,
     onUpdateAttack: (Float) -> Unit = {},
-    onUpdateDefend: (Float) -> Unit = {}
+    onUpdateDefend: (Float) -> Unit = {},
+    onShowCacluator: () -> Unit = {}
 ) {
-    var isCalculatorDialogOpen by remember { mutableStateOf(false) }
-
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -70,7 +78,7 @@ fun OddsFeatureContent(
             Box(modifier = Modifier.weight(0.5f)) {
                 IconButton(
                     onClick = {
-                        isCalculatorDialogOpen = true
+                        onShowCacluator()
                     },
                     modifier = Modifier
                         .align(Alignment.Center)
@@ -117,21 +125,6 @@ fun OddsFeatureContent(
             )
         }
     }
-
-    if (isCalculatorDialogOpen) {
-        CalculatorDialog(
-            Modifier.fillMaxSize(),
-            onSetAttack = { value ->
-                onUpdateAttack(value)
-            },
-            onSetDefend = { value ->
-                onUpdateDefend(value)
-            },
-            onDismissRequest = {
-                isCalculatorDialogOpen = false
-            }
-        )
-    }
 }
 
 @Preview(showBackground = true)
@@ -152,19 +145,67 @@ fun PreviewOddsFeature() {
 
     previewState = previewState.copy(odds = com.ica.tabletopassistant.util.MathUtils().calcOdds(previewState.attack, previewState.defend, previewState.isRounded, previewState.roundingMode))
 
-    OddsFeatureContent(
-        state = previewState,
-        onUpdateAttack = { attack ->
-            previewState = previewState.copy(
-                attack = attack,
-                odds = com.ica.tabletopassistant.util.MathUtils().calcOdds(attack, previewState.defend, previewState.isRounded, previewState.roundingMode)
-            )
-        },
-        onUpdateDefend = { defend ->
-            previewState = previewState.copy(
-                defend = defend,
-                odds = com.ica.tabletopassistant.util.MathUtils().calcOdds(previewState.attack, defend, previewState.isRounded, previewState.roundingMode)
+    var isCalculatorDialogOpen by remember { mutableStateOf(false) }
+
+    TabletopAssistantTheme {
+        OddsFeatureContent(
+            state = previewState,
+            onUpdateAttack = { attack ->
+                previewState = previewState.copy(
+                    attack = attack,
+                    odds = com.ica.tabletopassistant.util.MathUtils().calcOdds(
+                        attack,
+                        previewState.defend,
+                        previewState.isRounded,
+                        previewState.roundingMode
+                    )
+                )
+            },
+            onUpdateDefend = { defend ->
+                previewState = previewState.copy(
+                    defend = defend,
+                    odds = com.ica.tabletopassistant.util.MathUtils().calcOdds(
+                        previewState.attack,
+                        defend,
+                        previewState.isRounded,
+                        previewState.roundingMode
+                    )
+                )
+            },
+            onShowCacluator = {
+                isCalculatorDialogOpen = true
+            }
+        )
+        if (isCalculatorDialogOpen) {
+            CalculatorDialog(
+                Modifier.fillMaxSize(),
+                onSetAttack = { attack ->
+                    previewState = previewState.copy(
+                        attack = attack,
+                        odds = com.ica.tabletopassistant.util.MathUtils().calcOdds(
+                            attack,
+                            previewState.defend,
+                            previewState.isRounded,
+                            previewState.roundingMode
+                        )
+                    )
+                },
+                onSetDefend = { defend ->
+                    previewState = previewState.copy(
+                        defend = defend,
+                        odds = com.ica.tabletopassistant.util.MathUtils().calcOdds(
+                            previewState.attack,
+                            defend,
+                            previewState.isRounded,
+                            previewState.roundingMode
+                        )
+                    )
+                },
+                onDismissRequest = {
+                    isCalculatorDialogOpen = false
+                }
             )
         }
-    )
+
+    }
 }

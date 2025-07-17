@@ -17,6 +17,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -27,6 +30,8 @@ import com.ica.tabletopassistant.R
 import com.ica.tabletopassistant.features.dice.feature.DiceFeature
 import com.ica.tabletopassistant.features.odds.feature.OddsFeature
 import com.ica.tabletopassistant.features.spinners.feature.SpinnersFeature
+import com.ica.tabletopassistant.ui.CalculatorDialog
+import com.ica.tabletopassistant.ui.CalculatorDialogRequest
 
 import com.ica.tabletopassistant.ui.PngIcon
 
@@ -37,6 +42,11 @@ fun TabletopScreen(onFabClickRequest: (suspend () -> Unit) -> Unit = {},
                    viewModel: TabletopScreenViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var dialogRequest: CalculatorDialogRequest? by remember { mutableStateOf(null) }
+    val openDialog: (Float, (Float) -> Unit, (Float) -> Unit) -> Unit =
+        { initial, onSetAttack, onSetDefend ->
+            dialogRequest = CalculatorDialogRequest(initial, onSetAttack, onSetDefend)
+        }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize()/*.padding(2.dp)*/) {
         CenterAlignedTopAppBar(
@@ -81,14 +91,29 @@ fun TabletopScreen(onFabClickRequest: (suspend () -> Unit) -> Unit = {},
         */
 
         if (uiState.isOddsEnabled) {
-            OddsFeature()
+            OddsFeature(showDialog = openDialog)
         }
         if (uiState.isSpinnersEnabled) {
-            SpinnersFeature()
+            SpinnersFeature(showDialog = openDialog)
         }
         if (uiState.isDiceEnabled) {
             DiceFeature(onFabClickRequest = onFabClickRequest)
         }
+    }
+
+    dialogRequest?.let { req ->
+        CalculatorDialog(
+            Modifier.fillMaxSize(),
+            onSetAttack = { value ->
+                req.onSetAttack(value)
+            },
+            onSetDefend = { value ->
+                req.onSetDefend(value)
+            },
+            onDismissRequest = {
+                dialogRequest = null
+            }
+        )
     }
 }
 

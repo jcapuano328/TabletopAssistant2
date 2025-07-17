@@ -25,6 +25,12 @@ import androidx.compose.ui.unit.dp
 import com.ica.tabletopassistant.R
 import com.ica.tabletopassistant.ui.theme.TabletopAssistantTheme
 
+data class CalculatorDialogRequest(
+    val initialValue: Float,
+    val onSetAttack: (Float) -> Unit,
+    val onSetDefend: (Float) -> Unit
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalculatorDialog(

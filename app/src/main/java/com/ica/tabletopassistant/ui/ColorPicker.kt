@@ -14,19 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
-val DieColorMap = mapOf(
-    "red" to Color.Red,
-    "white" to Color.White,
-    "black" to Color.Black,
-    "yellow" to Color.Yellow,
-    "blue" to Color.Blue,
-    "green" to Color.Green,
-    "purple" to Color(0xFF800080),
-    "gray" to Color.Gray,
-    "olive" to Color(0xFF808000),
-    "sienna" to Color(0xFFA0522D)
-)
-
 @Composable
 fun ColorPicker(
     selected: String,

@@ -27,13 +27,13 @@ class MathUtils {
 
     fun calcOdds(attack: Float, defend: Float, isRounded: Boolean, roundingMode: Int): String {
         var oddsString = "NaN" // Renamed to avoid confusion with the numeric 'odds'
-        println("attack: $attack, defend: $defend, isRounded: $isRounded, roundingMode: $roundingMode")
+        //println("attack: $attack, defend: $defend, isRounded: $isRounded, roundingMode: $roundingMode")
         if (attack > 0 && defend > 0) {
             var ratio = if (attack >= defend) (attack / defend) else (defend / attack)
-            println("ratio: $ratio")
+            //println("ratio: $ratio")
             if (isRounded) {
                 // Your rounding logic based on roundingMode
-                println("roundingMode: $roundingMode")
+                //println("roundingMode: $roundingMode")
                 if (roundingMode == 0) // up
                     ratio = (ceil(ratio * 1000f) / 1000f) // Consider if you want this precision before formatting
                 else if (roundingMode == 1) // to nearest
@@ -45,7 +45,7 @@ class MathUtils {
                 else if (roundingMode == 2) // down
                     ratio = (floor(ratio * 1000f) / 1000f) // Consider if you want this precision before formatting
 
-                println("Rounded ratio: $ratio")
+                //println("Rounded ratio: $ratio")
             }
 
             // Determine the number of decimal places for formatting
@@ -58,7 +58,7 @@ class MathUtils {
             }
         }
 
-        println("oddsString: $oddsString")
+        //println("oddsString: $oddsString")
         return oddsString
     }
 

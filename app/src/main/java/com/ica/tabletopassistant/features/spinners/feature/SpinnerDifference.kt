@@ -17,27 +17,13 @@ fun SpinnerDifference(
     enabled: Boolean,
     value: Int,
     showCalculator: Boolean,
-    onSetLeft: (Int) -> Unit = {},
-    onSetRight: (Int) -> Unit = {})
-{
-    var isCalculatorDialogOpen by remember { mutableStateOf(false) }
-
+    onShowCalculator: () -> Unit = {},
+) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(2.dp)
     ) {
-        //Box(
-        //    modifier = Modifier
-        //        //.defaultMinSize(minWidth = 28.dp, minHeight = 28.dp) // Set min size
-        //        //.size(28.dp)
-        //        .weight(1f)
-        //        .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(1.dp))
-        //    ,
-        //    contentAlignment = Alignment.Center
-        //) {
-        //    Text(value.toString())
-        //}
         Row(
             modifier = modifier.weight(1f),
             verticalAlignment = Alignment.CenterVertically,
@@ -53,7 +39,8 @@ fun SpinnerDifference(
         ) {
             if (showCalculator) {
                 IconButton(
-                    onClick = { isCalculatorDialogOpen = true }
+                    enabled = enabled,
+                    onClick = onShowCalculator
                 ) {
                     PngIcon(
                         modifier = modifier.size(26.dp),
@@ -63,20 +50,6 @@ fun SpinnerDifference(
                 }
             }
         }
-    }
-    if (enabled && showCalculator && isCalculatorDialogOpen) {
-        CalculatorDialog(
-            Modifier.fillMaxSize(),
-            onSetAttack = { value ->
-                onSetLeft(value.toInt())
-            },
-            onSetDefend = { value ->
-                onSetRight(value.toInt())
-            },
-            onDismissRequest = {
-                isCalculatorDialogOpen = false
-            }
-        )
     }
 }
 

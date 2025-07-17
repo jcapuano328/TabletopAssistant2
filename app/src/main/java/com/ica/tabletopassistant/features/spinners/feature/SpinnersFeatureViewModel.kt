@@ -42,12 +42,20 @@ class SpinnersFeatureViewModel @Inject constructor(
         }
     }
 
+    fun updateValueAt(index: Int, newValue: Int) {
+        val currentValues = _uiState.value.values.toMutableList()
+        currentValues[index] = newValue
+        updateValues(currentValues)
+    }
+
     fun updateValues(values: List<Int>) {
         viewModelScope.launch {
             repository.setValues(values)
+            _uiState.value = _uiState.value.copy(values = values)
             calcDifference()
         }
     }
+
 
     private fun initializeValues() {
         val currentValues = _uiState.value.values.toMutableList()
@@ -58,7 +66,8 @@ class SpinnersFeatureViewModel @Inject constructor(
             newValues.add(currentValues.getOrNull(i) ?: 0) // Default to 0 if no existing value
         }
 
-        _uiState.value = _uiState.value.copy(values = newValues)
+        //_uiState.value = _uiState.value.copy(values = newValues)
+        updateValues(newValues)
     }
 
     private fun calcDifference() {
