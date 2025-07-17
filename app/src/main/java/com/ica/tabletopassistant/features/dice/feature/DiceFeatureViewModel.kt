@@ -74,8 +74,16 @@ class DiceFeatureViewModel @Inject constructor(
 
     private fun rollDice() {
         val random = MathUtils()
-        //val newValues = previewState.dice.map { it.currentValue }
-        val newValues = List(_uiState.value.dice.size) { random.randomDie6() }
+
+        val newValues = _uiState.value.dice.map {
+            when (it.sides) {
+                6 -> random.randomDie6()
+                8 -> random.randomDie8()
+                10 -> random.randomDie10()
+                else -> 1
+            }
+        }
+
         updateDice(newValues)
     }
 }

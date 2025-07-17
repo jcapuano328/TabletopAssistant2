@@ -66,12 +66,12 @@ class SpinnersFeatureViewModel @Inject constructor(
             newValues.add(currentValues.getOrNull(i) ?: 0) // Default to 0 if no existing value
         }
 
-        //_uiState.value = _uiState.value.copy(values = newValues)
+        _uiState.value = _uiState.value.copy(values = newValues)
         updateValues(newValues)
     }
 
     private fun calcDifference() {
-        if (_uiState.value.calcDifference && _uiState.value.number > 1)
+        if (_uiState.value.calcDifference && _uiState.value.number > 1 && _uiState.value.values.size > 1)
             _uiState.value = _uiState.value.copy(difference = _uiState.value.values[0] - _uiState.value.values[1])
     }
 }
