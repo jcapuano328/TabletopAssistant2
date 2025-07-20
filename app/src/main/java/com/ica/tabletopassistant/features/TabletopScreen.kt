@@ -49,7 +49,7 @@ fun TabletopScreen(onFabClickRequest: (suspend () -> Unit) -> Unit = {},
         }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize()/*.padding(2.dp)*/) {
-        CenterAlignedTopAppBar(
+        TopAppBar(
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.primary,
                 titleContentColor = MaterialTheme.colorScheme.onPrimary,
@@ -62,8 +62,8 @@ fun TabletopScreen(onFabClickRequest: (suspend () -> Unit) -> Unit = {},
                     resId = com.ica.tabletopassistant.R.drawable.table,
                     desc = "Logo",
                     modifier = Modifier
-                        .padding(horizontal = 12.dp)
-                        .size(32.dp)
+                        .padding(horizontal = 4.dp)
+                        .size(40.dp)
                     //.align(Alignment.Center)
                 )
             },
