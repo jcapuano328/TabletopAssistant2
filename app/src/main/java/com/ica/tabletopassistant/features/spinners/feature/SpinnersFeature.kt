@@ -8,8 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.ica.tabletopassistant.ui.CalculatorDialog
-import com.ica.tabletopassistant.ui.CalculatorDialogRequest
+import com.ica.tabletopassistant.features.calculator.CalculatorDialog
+import com.ica.tabletopassistant.features.calculator.CalculatorDialogRequest
 
 @Composable
 fun SpinnersFeature(

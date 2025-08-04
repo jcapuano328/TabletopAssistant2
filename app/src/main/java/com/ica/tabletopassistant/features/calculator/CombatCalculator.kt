@@ -1,4 +1,4 @@
-package com.ica.tabletopassistant.ui
+package com.ica.tabletopassistant.features.calculator
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

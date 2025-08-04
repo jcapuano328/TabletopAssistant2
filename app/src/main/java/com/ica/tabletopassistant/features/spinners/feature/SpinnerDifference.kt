@@ -9,7 +9,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 import com.ica.tabletopassistant.ui.PngIcon
-import com.ica.tabletopassistant.ui.CalculatorDialog
+import com.ica.tabletopassistant.features.calculator.CalculatorDialog
 
 @Composable
 fun SpinnerDifference(

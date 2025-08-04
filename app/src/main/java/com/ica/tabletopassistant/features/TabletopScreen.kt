@@ -30,8 +30,8 @@ import com.ica.tabletopassistant.R
 import com.ica.tabletopassistant.features.dice.feature.DiceFeature
 import com.ica.tabletopassistant.features.odds.feature.OddsFeature
 import com.ica.tabletopassistant.features.spinners.feature.SpinnersFeature
-import com.ica.tabletopassistant.ui.CalculatorDialog
-import com.ica.tabletopassistant.ui.CalculatorDialogRequest
+import com.ica.tabletopassistant.features.calculator.CalculatorDialog
+import com.ica.tabletopassistant.features.calculator.CalculatorDialogRequest
 
 import com.ica.tabletopassistant.ui.PngIcon
 
@@ -39,14 +39,10 @@ import com.ica.tabletopassistant.ui.PngIcon
 @Composable
 fun TabletopScreen(onFabClickRequest: (suspend () -> Unit) -> Unit = {},
                    onSettingsClick: () -> Unit = {},
+                   openDialog: (initial: Float, onSetAttack: (Float) -> Unit, onSetDefend: (Float) -> Unit) -> Unit,
                    viewModel: TabletopScreenViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var dialogRequest: CalculatorDialogRequest? by remember { mutableStateOf(null) }
-    val openDialog: (Float, (Float) -> Unit, (Float) -> Unit) -> Unit =
-        { initial, onSetAttack, onSetDefend ->
-            dialogRequest = CalculatorDialogRequest(initial, onSetAttack, onSetDefend)
-        }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize()/*.padding(2.dp)*/) {
         TopAppBar(
@@ -100,28 +96,6 @@ fun TabletopScreen(onFabClickRequest: (suspend () -> Unit) -> Unit = {},
             DiceFeature(onFabClickRequest = onFabClickRequest)
         }
     }
-
-    dialogRequest?.let { req ->
-        CalculatorDialog(
-            Modifier.fillMaxSize(),
-            onSetAttack = { value ->
-                req.onSetAttack(value)
-            },
-            onSetDefend = { value ->
-                req.onSetDefend(value)
-            },
-            onDismissRequest = {
-                dialogRequest = null
-            }
-        )
-    }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewTabletopScreen() {
-    TabletopScreen()
 }
 
 

@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ica.tabletopassistant.ui.InputNumeric
 import com.ica.tabletopassistant.ui.PngIcon
-import com.ica.tabletopassistant.ui.CalculatorDialog
+import com.ica.tabletopassistant.features.calculator.CalculatorDialog
 import com.ica.tabletopassistant.ui.theme.TabletopAssistantTheme
 
 @Composable
