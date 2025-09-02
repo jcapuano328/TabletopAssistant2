@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,16 +23,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ica.tabletopassistant.R
 import com.ica.tabletopassistant.features.dice.feature.DiceFeature
 import com.ica.tabletopassistant.features.odds.feature.OddsFeature
 import com.ica.tabletopassistant.features.spinners.feature.SpinnersFeature
-import com.ica.tabletopassistant.features.calculator.CalculatorDialog
-import com.ica.tabletopassistant.features.calculator.CalculatorDialogRequest
+import com.ica.tabletopassistant.features.general.TabletopHelpContent
+import com.ica.tabletopassistant.features.help.HelpDialog
 
 import com.ica.tabletopassistant.ui.PngIcon
 
@@ -43,6 +42,8 @@ fun TabletopScreen(onFabClickRequest: (suspend () -> Unit) -> Unit = {},
                    viewModel: TabletopScreenViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    var showHelp by remember { mutableStateOf(false) }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize()/*.padding(2.dp)*/) {
         TopAppBar(
@@ -67,24 +68,12 @@ fun TabletopScreen(onFabClickRequest: (suspend () -> Unit) -> Unit = {},
             actions = {
                 IconButton(onClick = onSettingsClick) {
                     Icon(Icons.Default.Settings, contentDescription = "Settings")
-                    /*
-                    PngIcon(
-                        resId = com.ica.tabletopassistant.R.drawable.settings_tertiary,
-                        desc = "Settings",
-                        modifier = Modifier
-                            .size(32.dp)
-                            //.align(Alignment.Center)
-                    )
-                    */
+                }
+                IconButton(onClick = { showHelp = true }) {
+                    Icon(Icons.Default.HelpOutline, contentDescription = "Help")
                 }
             }
         )
-        /*
-        Text("Tabletop Screen")
-        Text("Odds Enabled: ${uiState.isOddsEnabled}")
-        Text("Spinners Enabled: ${uiState.isSpinnersEnabled}")
-        Text("Dice Enabled: ${uiState.isDiceEnabled}")
-        */
 
         if (uiState.isOddsEnabled) {
             OddsFeature(showDialog = openDialog)
@@ -95,6 +84,16 @@ fun TabletopScreen(onFabClickRequest: (suspend () -> Unit) -> Unit = {},
         if (uiState.isDiceEnabled) {
             DiceFeature(onFabClickRequest = onFabClickRequest)
         }
+
+        if (showHelp) {
+            HelpDialog(
+                onDismiss = {showHelp = false},
+                currentTopic = "Tabletop"
+            ) {
+                TabletopHelpContent()
+            }
+        }
+
     }
 }
 

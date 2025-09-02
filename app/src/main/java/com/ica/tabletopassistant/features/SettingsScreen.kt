@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -34,6 +35,9 @@ import com.ica.tabletopassistant.ui.PngIcon
 import com.ica.tabletopassistant.features.dice.settings.DiceSettings
 import com.ica.tabletopassistant.features.dice.settings.DiceSettingsContent
 import com.ica.tabletopassistant.features.dice.settings.DiceSettingsUiState
+import com.ica.tabletopassistant.features.general.SettingsHelpContent
+import com.ica.tabletopassistant.features.general.TabletopHelpContent
+import com.ica.tabletopassistant.features.help.HelpDialog
 import com.ica.tabletopassistant.features.odds.settings.OddsSettings
 import com.ica.tabletopassistant.features.odds.settings.OddsSettingsContent
 import com.ica.tabletopassistant.features.odds.settings.OddsSettingsUiState
@@ -75,6 +79,7 @@ fun SettingsScreenContent(
     modifier: Modifier = Modifier
 ) {
     val resetCallbacks = remember { mutableStateListOf<() -> Unit>() }
+    var showHelp by remember { mutableStateOf(false) }
 
     Card(modifier = modifier.padding(2.dp)) {
         Column(
@@ -101,6 +106,9 @@ fun SettingsScreenContent(
                     }) {
                         Icon(Icons.Default.Refresh, contentDescription = "Reset")
                     }
+                    IconButton(onClick = { showHelp = true }) {
+                        Icon(Icons.Default.HelpOutline, contentDescription = "Help")
+                    }
                 }
             )
 
@@ -114,6 +122,15 @@ fun SettingsScreenContent(
             Spacer(Modifier.height(24.dp))
 
             spinnersSettingsSection(Modifier.weight(1f), { callback -> resetCallbacks.add(callback)})
+        }
+    }
+
+    if (showHelp) {
+        HelpDialog(
+            onDismiss = {showHelp = false},
+            currentTopic = "Settings"
+        ) {
+            SettingsHelpContent()
         }
     }
 }
@@ -165,8 +182,8 @@ fun PreviewSettingsScreen() {
                 isEnabled = true,
                 isRounded = true,
                 roundingMode = 1,
-                attack = 1f,
-                defend = 1f
+                attack = "1",
+                defend = "1"
             )
         )
     }
@@ -198,8 +215,8 @@ fun PreviewSettingsScreen() {
                     isEnabled = false,
                     isRounded = false,
                     roundingMode = 1,
-                    attack = 1f,
-                    defend = 1f
+                    attack = "1",
+                    defend = "1"
                 )
                 previewStateSpinners = SpinnersSettingsUiState(
                     isEnabled = false,

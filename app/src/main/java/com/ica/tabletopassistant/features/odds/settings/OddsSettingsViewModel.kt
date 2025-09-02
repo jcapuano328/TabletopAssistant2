@@ -14,8 +14,8 @@ data class OddsSettingsUiState(
     val isEnabled: Boolean = false,
     val isRounded: Boolean = false,
     val roundingMode : Int = 0,
-    val attack: Float = 1f,
-    val defend: Float = 1f
+    val attack: String = "1",
+    val defend: String = "1"
 )
 
 @HiltViewModel
@@ -63,13 +63,13 @@ class OddsSettingsViewModel @Inject constructor(
         }
     }
 
-    fun setAttack(value: Float) {
+    fun setAttack(value: String) {
         viewModelScope.launch {
             repository.setAttackValue(value)
         }
     }
 
-    fun setDefend(value: Float) {
+    fun setDefend(value: String) {
         viewModelScope.launch {
             repository.setDefendValue(value)
         }

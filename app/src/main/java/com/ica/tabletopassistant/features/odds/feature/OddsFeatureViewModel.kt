@@ -17,8 +17,8 @@ data class OddsFeatureUiState(
     val isEnabled: Boolean = false,
     val isRounded: Boolean = false,
     val roundingMode : Int = 0,
-    val attack: Float = 1f,
-    val defend: Float = 1f,
+    val attack: String = "1",
+    val defend: String = "1",
     val odds: String = "1:1"
 )
 
@@ -36,22 +36,22 @@ class OddsFeatureViewModel @Inject constructor(
                     isEnabled = config.isEnabled,
                     isRounded = config.isRounded,
                     roundingMode = config.roundingMode,
-                    attack = config.attack,
-                    defend = config.defend
+                    attack = config.attack.toString(),
+                    defend = config.defend.toString()
                 )
             }
             calcOdds()
         }
     }
 
-    fun setAttack(value: Float) {
+    fun setAttack(value: String) {
         viewModelScope.launch {
             repository.setAttackValue(value)
             calcOdds()
         }
     }
 
-    fun setDefend(value: Float) {
+    fun setDefend(value: String) {
         viewModelScope.launch {
             repository.setDefendValue(value)
             calcOdds()
@@ -59,7 +59,9 @@ class OddsFeatureViewModel @Inject constructor(
     }
 
     private fun calcOdds() {
-        val oddsString = com.ica.tabletopassistant.util.MathUtils().calcOdds(_uiState.value.attack, _uiState.value.defend, _uiState.value.isRounded, _uiState.value.roundingMode)
+        val attackStr = _uiState.value.attack.toFloatOrNull() ?: 1f
+        val defendStr = _uiState.value.defend.toFloatOrNull() ?: 1f
+        val oddsString = com.ica.tabletopassistant.util.MathUtils().calcOdds(attackStr, defendStr, _uiState.value.isRounded, _uiState.value.roundingMode)
         _uiState.value = _uiState.value.copy(odds = oddsString)
     }
 }

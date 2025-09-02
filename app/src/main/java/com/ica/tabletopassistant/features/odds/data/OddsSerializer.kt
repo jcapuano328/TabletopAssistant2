@@ -11,8 +11,8 @@ object OddsSerializer : Serializer<OddsFeatureConfig> {
         .setIsEnabled(false) // custom default
         .setIsRounded(false)
         .setRoundingMode(1) // std
-        .setAttack(1F)
-        .setDefend(1F)
+        .setAttack("1")
+        .setDefend("1")
         .build()
 
     override suspend fun readFrom(input: InputStream): OddsFeatureConfig {

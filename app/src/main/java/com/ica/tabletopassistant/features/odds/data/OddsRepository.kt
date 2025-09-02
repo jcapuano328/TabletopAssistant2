@@ -35,7 +35,7 @@ class OddsRepository @Inject constructor(
         }
     }
 
-    suspend fun setAttackValue(value: Float) {
+    suspend fun setAttackValue(value: String) {
         dataStore.updateData { config ->
             config.toBuilder()
                 .setAttack(value)
@@ -43,7 +43,7 @@ class OddsRepository @Inject constructor(
         }
     }
 
-    suspend fun setDefendValue(value: Float) {
+    suspend fun setDefendValue(value: String) {
         dataStore.updateData { config ->
             config.toBuilder()
                 .setDefend(value)
@@ -51,7 +51,7 @@ class OddsRepository @Inject constructor(
         }
     }
 
-    suspend fun setBothValues(attack: Float, defend: Float) {
+    suspend fun setBothValues(attack: String, defend: String) {
         dataStore.updateData { config ->
             config.toBuilder()
                 .setAttack(attack)

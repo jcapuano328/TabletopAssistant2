@@ -33,7 +33,7 @@ fun OddsFeature(
         onUpdateAttack = viewModel::setAttack,
         onUpdateDefend = viewModel::setDefend,
         onShowCacluator = {
-            showDialog(/*uiState.attack*/0f, viewModel::setAttack, viewModel::setDefend)
+            showDialog(/*uiState.attack*/0f, { viewModel.setAttack(it.toString()) }, { viewModel.setDefend(it.toString()) })
         }
 
     )
@@ -43,8 +43,8 @@ fun OddsFeature(
 fun OddsFeatureContent(
     modifier: Modifier = Modifier,
     state: OddsFeatureUiState,
-    onUpdateAttack: (Float) -> Unit = {},
-    onUpdateDefend: (Float) -> Unit = {},
+    onUpdateAttack: (String) -> Unit = {},
+    onUpdateDefend: (String) -> Unit = {},
     onShowCacluator: () -> Unit = {}
 ) {
     Column(
@@ -107,19 +107,15 @@ fun OddsFeatureContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             InputNumeric(
-                value = state.attack.toString(),
-                onValueChange = { newValue ->
-                    onUpdateAttack(newValue.toFloatOrNull() ?: 0f)
-                },
+                value = state.attack,
+                onValueChange = onUpdateAttack,
                 label = "Attacker",
                 modifier = Modifier.weight(1f)
             )
             Text(text = state.odds, modifier = Modifier.weight(0.5f), fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
             InputNumeric(
-                value = state.defend.toString(),
-                onValueChange = { newValue ->
-                    onUpdateDefend(newValue.toFloatOrNull() ?: 0f)
-                },
+                value = state.defend,
+                onValueChange = onUpdateDefend,
                 label = "Defender",
                 modifier = Modifier.weight(1f)
             )
@@ -137,13 +133,13 @@ fun PreviewOddsFeature() {
                 isEnabled = true,
                 isRounded = true,
                 roundingMode = 1,
-                attack = 13.5f,
-                defend = 4.36f
+                attack = "13.5",
+                defend = "4.36"
             )
         )
     }
 
-    previewState = previewState.copy(odds = com.ica.tabletopassistant.util.MathUtils().calcOdds(previewState.attack, previewState.defend, previewState.isRounded, previewState.roundingMode))
+    previewState = previewState.copy(odds = com.ica.tabletopassistant.util.MathUtils().calcOdds(previewState.attack.toFloat(), previewState.defend.toFloat(), previewState.isRounded, previewState.roundingMode))
 
     var isCalculatorDialogOpen by remember { mutableStateOf(false) }
 
@@ -154,8 +150,8 @@ fun PreviewOddsFeature() {
                 previewState = previewState.copy(
                     attack = attack,
                     odds = com.ica.tabletopassistant.util.MathUtils().calcOdds(
-                        attack,
-                        previewState.defend,
+                        attack.toFloat(),
+                        previewState.defend.toFloat(),
                         previewState.isRounded,
                         previewState.roundingMode
                     )
@@ -165,8 +161,8 @@ fun PreviewOddsFeature() {
                 previewState = previewState.copy(
                     defend = defend,
                     odds = com.ica.tabletopassistant.util.MathUtils().calcOdds(
-                        previewState.attack,
-                        defend,
+                        previewState.attack.toFloat(),
+                        defend.toFloat(),
                         previewState.isRounded,
                         previewState.roundingMode
                     )
@@ -181,10 +177,10 @@ fun PreviewOddsFeature() {
                 Modifier.fillMaxSize(),
                 onSetAttack = { attack ->
                     previewState = previewState.copy(
-                        attack = attack,
+                        attack = attack.toString(),
                         odds = com.ica.tabletopassistant.util.MathUtils().calcOdds(
                             attack,
-                            previewState.defend,
+                            previewState.defend.toFloat(),
                             previewState.isRounded,
                             previewState.roundingMode
                         )
@@ -192,9 +188,9 @@ fun PreviewOddsFeature() {
                 },
                 onSetDefend = { defend ->
                     previewState = previewState.copy(
-                        defend = defend,
+                        defend = defend.toString(),
                         odds = com.ica.tabletopassistant.util.MathUtils().calcOdds(
-                            previewState.attack,
+                            previewState.attack.toFloat(),
                             defend,
                             previewState.isRounded,
                             previewState.roundingMode

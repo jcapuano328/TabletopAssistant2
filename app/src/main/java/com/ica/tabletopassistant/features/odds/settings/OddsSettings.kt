@@ -166,8 +166,8 @@ fun PreviewOddsSettings() {
                 isEnabled = true,
                 isRounded = false,
                 roundingMode = 0,
-                attack = 1f,
-                defend = 1f
+                attack = "1",
+                defend = "1"
 
             )
         )

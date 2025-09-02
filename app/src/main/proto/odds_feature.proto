@@ -7,6 +7,6 @@ message OddsFeatureConfig {
   bool is_enabled = 1;
   bool is_rounded = 2;
   int32 rounding_mode = 3;
-  float attack = 4;
-  float defend = 5;
+  string attack = 4;
+  string defend = 5;
 }

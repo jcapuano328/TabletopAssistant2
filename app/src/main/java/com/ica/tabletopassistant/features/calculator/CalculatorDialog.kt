@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -18,11 +19,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ica.tabletopassistant.R
+import com.ica.tabletopassistant.features.help.HelpDialog
 import com.ica.tabletopassistant.ui.theme.TabletopAssistantTheme
 
 data class CalculatorDialogRequest(
@@ -39,6 +45,8 @@ fun CalculatorDialog(
     onSetDefend: (Float) -> Unit,
     onDismissRequest: () -> Unit
 ) {
+    var showHelp by remember { mutableStateOf(false) }
+
     Card(modifier = modifier.padding(2.dp)) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -57,12 +65,12 @@ fun CalculatorDialog(
                     IconButton(onClick = onDismissRequest) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
+                },
+                actions = {
+                    IconButton(onClick = { showHelp = true }) {
+                        Icon(Icons.Default.HelpOutline, contentDescription = "Help")
+                    }
                 }
-                //actions = {
-                //    IconButton(onClick = onDismissRequest) {
-                //        PngIcon(R.drawable.close_tertiary, "Back")
-                //    }
-                //}
             )
 
             CombatCalculator(
@@ -71,6 +79,16 @@ fun CalculatorDialog(
             )
         }
     }
+
+    if (showHelp) {
+        HelpDialog(
+            onDismiss = {showHelp = false},
+            currentTopic = "Calculator"
+        ) {
+            CalculatorHelpContent()
+        }
+    }
+
 }
 
 @Preview(showBackground = true)
