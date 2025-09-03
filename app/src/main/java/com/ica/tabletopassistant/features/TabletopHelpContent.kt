@@ -10,6 +10,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.ica.tabletopassistant.features.TabletopAssistantAboutContent
+import com.ica.tabletopassistant.features.TabletopAssistantGeneralSection
+import com.ica.tabletopassistant.features.TabletopAssistantIntroductionSection
 import com.ica.tabletopassistant.features.dice.help.DiceHelpSection
 import com.ica.tabletopassistant.features.odds.help.OddsHelpSection
 import com.ica.tabletopassistant.features.dice.help.RollDiceHelpSection
@@ -25,6 +28,10 @@ fun TabletopHelpContent() {
                 .padding(2.dp)
                 .fillMaxWidth()
         ) {
+            item {
+                TabletopAssistantIntroductionSection()
+            }
+
             // Section 1
             item {
                 OddsHelpSection()

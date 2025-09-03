@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HelpOutline
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,6 +45,8 @@ fun TabletopScreen(onFabClickRequest: (suspend () -> Unit) -> Unit = {},
     val uiState by viewModel.uiState.collectAsState()
 
     var showHelp by remember { mutableStateOf(false) }
+    var showAbout by remember { mutableStateOf(false) }
+
 
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize()/*.padding(2.dp)*/) {
         TopAppBar(
@@ -69,6 +72,9 @@ fun TabletopScreen(onFabClickRequest: (suspend () -> Unit) -> Unit = {},
                 IconButton(onClick = onSettingsClick) {
                     Icon(Icons.Default.Settings, contentDescription = "Settings")
                 }
+                //IconButton(onClick = { showAbout = true }) {
+                //    Icon(Icons.Default.Info, contentDescription = "About")
+                //}
                 IconButton(onClick = { showHelp = true }) {
                     Icon(Icons.Default.HelpOutline, contentDescription = "Help")
                 }
@@ -93,7 +99,15 @@ fun TabletopScreen(onFabClickRequest: (suspend () -> Unit) -> Unit = {},
                 TabletopHelpContent()
             }
         }
-
+        if (showAbout) {
+            HelpDialog(
+                onDismiss = {showAbout = false},
+                title = "About",
+                currentTopic = "Tabletop Assistant"
+            ) {
+                TabletopAssistantAboutContent()
+            }
+        }
     }
 }
 

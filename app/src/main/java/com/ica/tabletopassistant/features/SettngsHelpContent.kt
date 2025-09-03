@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Casino
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.SpaceBar
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -36,11 +37,13 @@ import com.ica.tabletopassistant.features.spinners.help.SpinnersSettingsHelpSect
 @Composable
 fun SettingsHelpContent() {
     var selectedTabIndex by remember { mutableStateOf(0) }
-    val tabTitles = listOf("General", "Dice", "Odds", "Spins")
+    val tabTitles = listOf("Dice", "Odds", "Spinners")
 
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
         .fillMaxSize()
         .padding(2.dp)) {
+
+        SettingsHelpSection()
 
         TabRow(selectedTabIndex = selectedTabIndex) {
             tabTitles.forEachIndexed { index, title ->
@@ -58,46 +61,28 @@ fun SettingsHelpContent() {
         ) {
             item {
                 when (selectedTabIndex) {
-                    0 -> SettingsHelpSection()
-                    1 -> DiceSettingsHelpSection()
-                    2 -> OddsSettingsHelpSection()
-                    3 -> SpinnersSettingsHelpSection()
+                    0 -> DiceSettingsHelpSection()
+                    1 -> OddsSettingsHelpSection()
+                    2 -> SpinnersSettingsHelpSection()
                 }
             }
         }
-
-
-        /*
-        LazyColumn(
-            modifier = Modifier
-                .padding(2.dp)
-                .fillMaxWidth()
-        ) {
-            // Section 1
-            item {
-                DiceSettingsHelpSection()
-            }
-
-            // Section 2
-            item {
-                OddsSettingsHelpSection()
-            }
-
-            // Section 3
-            item {
-                SpinnersSettingsHelpSection()
-            }
-        }
-        */
     }
 }
 
 @Composable
 fun SettingsHelpSection() {
     Column(Modifier.padding(16.dp)) {
+        Card(modifier = Modifier.padding(2.dp)) {
+            Text(
+                "The tabletop can be configured to present up to 30 6, 8 or 10 sided dice. The dice can be grouped and arrayed in a logical fashion that is appropriate for the game. An optional odds calculator and spinners (counters) can also be added.",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(8.dp)
+            )
+        }
         Icon(Icons.Default.Refresh, contentDescription = "Reset")
         BulletPoint(text = "Tap the Reset button to reset to defaults.")
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(4.dp))
     }
 }
 

@@ -44,8 +44,8 @@ fun DiceSettingsHelpSection() {
 
                 BulletPoint(text = "Dice are presented in rows on the tabletop.")
                 BulletPoint(text = "Up to 5 dice, or spacers, can be shown on a row.")
-                BulletPoint(text = "Approximately 5 rows can be shown on the tabletop.")
-                BulletPoint(text = "Add dice and spacers to represent the logical groupings of dice on the tabletop.")
+                BulletPoint(text = "Approximately 6 rows can be shown on the tabletop, depending on the configuration of other options.")
+                BulletPoint(text = "Add dice and spacers to represent logical groupings of dice on the tabletop.")
                 Spacer(Modifier.height(12.dp))
 
                 // add die
