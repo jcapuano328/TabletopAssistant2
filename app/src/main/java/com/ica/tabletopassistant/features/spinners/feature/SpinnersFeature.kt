@@ -64,6 +64,36 @@ fun SpinnersFeatureContent(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            if (state.calcDifference && state.number > 1) {
+                // show the difference
+                SpinnerDifference(
+                    modifier = modifier.weight(1f),
+                    enabled = state.isEnabled,
+                    value = state.difference,
+                    showCalculator = state.showCalculator,
+                    onShowCalculator = {
+                        showDialog(
+                            0f,//state.values[0].toFloat(),
+                            {
+                                onUpdateValueAt(0, it.toInt())
+                            },
+                            {
+                                onUpdateValueAt(1, it.toInt())
+                            }
+                        )
+                    }
+                )
+            }
+        }
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(2.dp)
+            ,
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             // let's present a SpinnerItem for each number
             for (i in 0 until state.number) {
                 SpinnerItem(
@@ -75,26 +105,6 @@ fun SpinnersFeatureContent(
                         onUpdateValues(newValues)
                     }
                 )
-                if (state.calcDifference && state.number > 1 && i == 0) {
-                    // show the difference
-                    SpinnerDifference(
-                        modifier = modifier.weight(1f),
-                        enabled = state.isEnabled,
-                        value = state.difference,
-                        showCalculator = state.showCalculator,
-                        onShowCalculator = {
-                            showDialog(
-                                0f,//state.values[0].toFloat(),
-                                {
-                                    onUpdateValueAt(0, it.toInt())
-                                },
-                                {
-                                    onUpdateValueAt(1, it.toInt())
-                                }
-                            )
-                        }
-                    )
-                }
             }
         }
     }
