@@ -139,7 +139,7 @@ fun PreviewOddsFeature() {
         )
     }
 
-    previewState = previewState.copy(odds = com.ica.tabletopassistant.util.MathUtils().calcOdds(previewState.attack.toFloat(), previewState.defend.toFloat(), previewState.isRounded, previewState.roundingMode))
+    previewState = previewState.copy(odds = com.ica.tabletopassistant.util.calcOdds(previewState.attack.toFloat(), previewState.defend.toFloat(), previewState.isRounded, previewState.roundingMode))
 
     var isCalculatorDialogOpen by remember { mutableStateOf(false) }
 
@@ -149,7 +149,7 @@ fun PreviewOddsFeature() {
             onUpdateAttack = { attack ->
                 previewState = previewState.copy(
                     attack = attack,
-                    odds = com.ica.tabletopassistant.util.MathUtils().calcOdds(
+                    odds = com.ica.tabletopassistant.util.calcOdds(
                         attack.toFloat(),
                         previewState.defend.toFloat(),
                         previewState.isRounded,
@@ -160,7 +160,7 @@ fun PreviewOddsFeature() {
             onUpdateDefend = { defend ->
                 previewState = previewState.copy(
                     defend = defend,
-                    odds = com.ica.tabletopassistant.util.MathUtils().calcOdds(
+                    odds = com.ica.tabletopassistant.util.calcOdds(
                         previewState.attack.toFloat(),
                         defend.toFloat(),
                         previewState.isRounded,
@@ -178,7 +178,7 @@ fun PreviewOddsFeature() {
                 onSetAttack = { attack ->
                     previewState = previewState.copy(
                         attack = attack.toString(),
-                        odds = com.ica.tabletopassistant.util.MathUtils().calcOdds(
+                        odds = com.ica.tabletopassistant.util.calcOdds(
                             attack,
                             previewState.defend.toFloat(),
                             previewState.isRounded,
@@ -189,7 +189,7 @@ fun PreviewOddsFeature() {
                 onSetDefend = { defend ->
                     previewState = previewState.copy(
                         defend = defend.toString(),
-                        odds = com.ica.tabletopassistant.util.MathUtils().calcOdds(
+                        odds = com.ica.tabletopassistant.util.calcOdds(
                             previewState.attack.toFloat(),
                             defend,
                             previewState.isRounded,

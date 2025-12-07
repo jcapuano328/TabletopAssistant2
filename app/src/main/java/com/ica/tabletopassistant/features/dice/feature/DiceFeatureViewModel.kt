@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ica.tabletopassistant.data.dice.Die
 import com.ica.tabletopassistant.features.dice.data.DiceRepository
-import com.ica.tabletopassistant.util.MathUtils
+import com.ica.tabletopassistant.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -73,13 +73,11 @@ class DiceFeatureViewModel @Inject constructor(
     }
 
     private fun rollDice() {
-        val random = MathUtils()
-
         val newValues = _uiState.value.dice.map {
             when (it.sides) {
-                6 -> random.randomDie6()
-                8 -> random.randomDie8()
-                10 -> random.randomDie10()
+                6 -> randomDie6()
+                8 -> randomDie8()
+                10 -> randomDie10()
                 else -> 1
             }
         }

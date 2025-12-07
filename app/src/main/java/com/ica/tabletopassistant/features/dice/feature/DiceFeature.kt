@@ -26,7 +26,7 @@ import androidx.compose.ui.layout.ContentScale
 import com.ica.tabletopassistant.data.dice.Die
 import com.ica.tabletopassistant.R
 import com.ica.tabletopassistant.ui.DieColorMap
-import com.ica.tabletopassistant.util.MathUtils
+import com.ica.tabletopassistant.util.*
 
 @Composable
 fun DiceFeature(
@@ -34,11 +34,12 @@ fun DiceFeature(
     onFabClickRequest: (suspend () -> Unit) -> Unit,
     viewModel: DiceFeatureViewModel = hiltViewModel()
 ) {
+    var rollTrigger by remember { mutableStateOf(0) }
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(Unit) {
         onFabClickRequest {
-            println("DiceFeature: FAB clicked")
+            rollTrigger++
             viewModel.onFabClicked()
         }
     }
@@ -47,7 +48,8 @@ fun DiceFeature(
         modifier = modifier,
         state = uiState,
         onUpdateDice = viewModel::updateDice,
-        onUpdateDie = viewModel::updateDie
+        onUpdateDie = viewModel::updateDie,
+        rollTrigger = rollTrigger
     )
 }
 
@@ -56,9 +58,12 @@ fun DiceFeatureContent(
     modifier: Modifier = Modifier,
     state: DiceFeatureUiState,
     onUpdateDice: (List<Int>) -> Unit = {},
-    onUpdateDie: (Int, Int) -> Unit = { _, _ -> }
+    onUpdateDie: (Int, Int) -> Unit = { _, _ -> },
+    rollTrigger: Int = 0
 ) {
-    Box(modifier = modifier.fillMaxSize()) {
+    //Box(modifier = modifier.fillMaxSize()) {
+    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+        val itemWidth = maxWidth / 6
         Image(
             painter = painterResource(id = R.drawable.tabletop),
             contentDescription = "Table top", // Provide a meaningful description
@@ -71,15 +76,6 @@ fun DiceFeatureContent(
                 .wrapContentHeight()
                 .padding(2.dp)
         ) {
-            /*
-            Text("Enabled: ${state.isEnabled}")
-            Text("One Based: ${state.isOneBased}")
-            Text("Dice ${state.dice.size}")
-            // simple text listing of the values
-            val diceValues = state.dice.map { it.currentValue }
-            Text("Dice Values: $diceValues")
-            */
-
             val widgetsWithSpacers: List<GridItem> = buildList {
                 for (die in state.dice) {
                     if (die.isSpacer) add(GridItem.Spacer)
@@ -87,7 +83,7 @@ fun DiceFeatureContent(
                 }
             }
 
-            val dieSize = 65.dp
+            val dieSize = itemWidth//65.dp
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = dieSize), // adjusts how many per row based on screen width
                 modifier = Modifier
@@ -107,6 +103,7 @@ fun DiceFeatureContent(
                                 .clip(RoundedCornerShape(8.dp)),
                             contentAlignment = Alignment.Center
                         ) {
+                            //com.ica.tabletopassistant.ui.RollableDie(
                             com.ica.tabletopassistant.ui.Die(
                                 modifier = Modifier.fillMaxSize(),//.size(dieSize),
                                 dieNumber = index,
@@ -118,7 +115,8 @@ fun DiceFeatureContent(
                                 sides = item.sides,
                                 dieColor = item.dieColor ?: Color.White,
                                 dotColor = item.dotColor ?: Color.Black,
-                                dieValue = item.value
+                                dieValue = item.value,
+                                //rollTrigger = rollTrigger
                             )
                         }
                         GridItem.Spacer -> Box(
@@ -226,9 +224,8 @@ fun PreviewDiceFeature() {
 
         IconButton(modifier = Modifier.weight(1f),
             onClick = {
-                val random = MathUtils()
                 //val newValues = previewState.dice.map { it.currentValue }
-                val newValues = List(previewState.dice.size) { random.randomDie6() }
+                val newValues = List(previewState.dice.size) { randomDie6() }
                 previewState = previewState.copy(dice = previewState.dice.mapIndexed { index, die ->
                     die.toBuilder()
                         .setCurrentValue(newValues[index])

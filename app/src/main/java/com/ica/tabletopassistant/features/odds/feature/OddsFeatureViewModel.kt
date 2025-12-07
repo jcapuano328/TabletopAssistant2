@@ -61,7 +61,7 @@ class OddsFeatureViewModel @Inject constructor(
     private fun calcOdds() {
         val attackStr = _uiState.value.attack.toFloatOrNull() ?: 1f
         val defendStr = _uiState.value.defend.toFloatOrNull() ?: 1f
-        val oddsString = com.ica.tabletopassistant.util.MathUtils().calcOdds(attackStr, defendStr, _uiState.value.isRounded, _uiState.value.roundingMode)
+        val oddsString = com.ica.tabletopassistant.util.calcOdds(attackStr, defendStr, _uiState.value.isRounded, _uiState.value.roundingMode)
         _uiState.value = _uiState.value.copy(odds = oddsString)
     }
 }

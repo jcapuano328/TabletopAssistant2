@@ -36,9 +36,10 @@ fun OddsSettingsHelpSection() {
             Spacer(Modifier.height(4.dp))
             BulletPoint(text = "Choose the rounding mode:")
             Column(Modifier.padding(start = 16.dp)) {
-                BulletPoint(text = "Up: round up to nearest whole number.")
-                BulletPoint(text = "Std: round to nearest half.")
-                BulletPoint(text = "Down: round down to nearest whole number.")
+                BulletPoint(text = "Up: up to nearest whole number.")
+                BulletPoint(text = "Half: round to nearest half.")
+                BulletPoint(text = "Down: down to nearest whole number.")
+                BulletPoint(text = "Standard: round to nearest whole number.")
             }
             Spacer(Modifier.height(16.dp))
         }
