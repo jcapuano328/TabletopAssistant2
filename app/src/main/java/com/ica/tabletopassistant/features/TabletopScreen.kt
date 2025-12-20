@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ica.tabletopassistant.R
+import com.ica.tabletopassistant.features.calculator.CalculatorDialogType
 import com.ica.tabletopassistant.features.dice.feature.DiceFeature
 import com.ica.tabletopassistant.features.odds.feature.OddsFeature
 import com.ica.tabletopassistant.features.spinners.feature.SpinnersFeature
@@ -39,7 +40,7 @@ import com.ica.tabletopassistant.ui.PngIcon
 @Composable
 fun TabletopScreen(onFabClickRequest: (suspend () -> Unit) -> Unit = {},
                    onSettingsClick: () -> Unit = {},
-                   openDialog: (initial: Float, onSetAttack: (Float) -> Unit, onSetDefend: (Float) -> Unit) -> Unit,
+                   openDialog: (type: CalculatorDialogType, isRounded: Boolean, roundingMode: Int, initial: Float, onSetAttack: (Float) -> Unit, onSetDefend: (Float) -> Unit) -> Unit,
                    viewModel: TabletopScreenViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()

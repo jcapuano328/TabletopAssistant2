@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 
 import com.ica.tabletopassistant.data.dice.Die
 import com.ica.tabletopassistant.R
@@ -63,7 +64,12 @@ fun DiceFeatureContent(
 ) {
     //Box(modifier = modifier.fillMaxSize()) {
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
-        val itemWidth = maxWidth / 6
+// 1. Get the current configuration
+        val configuration = LocalConfiguration.current
+
+        // 2. Check the orientation
+        val isPortrait = configuration.orientation == android.content.res.Configuration.ORIENTATION_PORTRAIT
+        val itemWidth = if (isPortrait) maxWidth / 6 else maxHeight / 3
         Image(
             painter = painterResource(id = R.drawable.tabletop),
             contentDescription = "Table top", // Provide a meaningful description

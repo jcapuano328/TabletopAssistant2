@@ -1,7 +1,6 @@
 package com.ica.tabletopassistant.features.spinners.feature
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -10,12 +9,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ica.tabletopassistant.features.calculator.CalculatorDialog
 import com.ica.tabletopassistant.features.calculator.CalculatorDialogRequest
+import com.ica.tabletopassistant.features.calculator.CalculatorDialogType
 
 @Composable
 fun SpinnersFeature(
     modifier: Modifier = Modifier,
     viewModel: SpinnersFeatureViewModel = hiltViewModel(),
-    showDialog: (initial: Float, onSetAttack: (Float) -> Unit, onSetDefend: (Float) -> Unit) -> Unit
+    showDialog: (type: CalculatorDialogType, isRounded: Boolean, roundingMode: Int, initial: Float, onSetAttack: (Float) -> Unit, onSetDefend: (Float) -> Unit) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -38,7 +38,7 @@ fun SpinnersFeatureContent(
     state: SpinnersFeatureUiState,
     onUpdateValueAt: (Int, Int) -> Unit = { _, _ -> },
     onUpdateValues: (List<Int>) -> Unit = {},
-    showDialog: (initial: Float, onSetAttack: (Float) -> Unit, onSetDefend: (Float) -> Unit) -> Unit
+    showDialog: (type: CalculatorDialogType, isRounded: Boolean, roundingMode: Int, initial: Float, onSetAttack: (Float) -> Unit, onSetDefend: (Float) -> Unit) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -73,6 +73,9 @@ fun SpinnersFeatureContent(
                     showCalculator = state.showCalculator,
                     onShowCalculator = {
                         showDialog(
+                            CalculatorDialogType.Standard,
+                            false,
+                            0,
                             0f,//state.values[0].toFloat(),
                             {
                                 onUpdateValueAt(0, it.toInt())
@@ -129,9 +132,9 @@ fun PreviewSpinnersFeature() {
     }
 
     var dialogRequest: CalculatorDialogRequest? by remember { mutableStateOf(null) }
-    val openDialog: (Float, (Float) -> Unit, (Float) -> Unit) -> Unit =
-        { initial, onSetAttack, onSetDefend ->
-            dialogRequest = CalculatorDialogRequest(initial, onSetAttack, onSetDefend)
+    val openDialog: (CalculatorDialogType, Boolean, Int,Float, (Float) -> Unit, (Float) -> Unit) -> Unit =
+        { type, isRounded, roundingMode,initial, onSetAttack, onSetDefend ->
+            dialogRequest = CalculatorDialogRequest(type, isRounded, roundingMode, initial, onSetAttack, onSetDefend)
         }
 
     SpinnersFeatureContent(

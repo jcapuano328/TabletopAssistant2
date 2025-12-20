@@ -31,7 +31,14 @@ import com.ica.tabletopassistant.R
 import com.ica.tabletopassistant.features.help.HelpDialog
 import com.ica.tabletopassistant.ui.theme.TabletopAssistantTheme
 
+enum class CalculatorDialogType {
+    Standard,
+    Odds
+}
 data class CalculatorDialogRequest(
+    val type: CalculatorDialogType,
+    val isRounded: Boolean = false,
+    val roundingMode: Int = 2,
     val initialValue: Float,
     val onSetAttack: (Float) -> Unit,
     val onSetDefend: (Float) -> Unit

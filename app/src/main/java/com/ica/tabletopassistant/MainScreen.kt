@@ -23,10 +23,13 @@ import com.ica.tabletopassistant.features.SettingsScreen
 import com.ica.tabletopassistant.features.TabletopScreen
 import com.ica.tabletopassistant.features.calculator.CalculatorDialog
 import com.ica.tabletopassistant.features.calculator.CalculatorDialogRequest
+import com.ica.tabletopassistant.features.calculator.CalculatorDialogType
+import com.ica.tabletopassistant.features.odds.feature.OddsCalculatorDialog
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.math.round
 
 @Composable
 fun MainScreen() {
@@ -34,9 +37,9 @@ fun MainScreen() {
 
     var fabAction by remember { mutableStateOf<suspend () -> Unit>({}) }
     var dialogRequest: CalculatorDialogRequest? by remember { mutableStateOf(null) }
-    val openDialog: (Float, (Float) -> Unit, (Float) -> Unit) -> Unit =
-        { initial, onSetAttack, onSetDefend ->
-            dialogRequest = CalculatorDialogRequest(initial, onSetAttack, onSetDefend)
+    val openDialog: (CalculatorDialogType, Boolean, Int, Float, (Float) -> Unit, (Float) -> Unit) -> Unit =
+        { type, isRounded, roundingMode, initial, onSetAttack, onSetDefend ->
+            dialogRequest = CalculatorDialogRequest(type, isRounded, roundingMode, initial, onSetAttack, onSetDefend)
         }
 
 
@@ -85,18 +88,37 @@ fun MainScreen() {
         }
 
         dialogRequest?.let { req ->
-            CalculatorDialog(
-                Modifier.fillMaxSize(),
-                onSetAttack = { value ->
-                    req.onSetAttack(value)
-                },
-                onSetDefend = { value ->
-                    req.onSetDefend(value)
-                },
-                onDismissRequest = {
-                    dialogRequest = null
-                }
-            )
+            if (req.type == CalculatorDialogType.Odds)
+            {
+                OddsCalculatorDialog(
+                    Modifier.fillMaxSize(),
+                    isRounded = req.isRounded,
+                    roundingMode = req.roundingMode,
+                    onSetAttack = { value ->
+                        req.onSetAttack(value)
+                    },
+                    onSetDefend = { value ->
+                        req.onSetDefend(value)
+                    },
+                    onDismissRequest = {
+                        dialogRequest = null
+                    }
+                )
+            }
+            else {
+                CalculatorDialog(
+                    Modifier.fillMaxSize(),
+                    onSetAttack = { value ->
+                        req.onSetAttack(value)
+                    },
+                    onSetDefend = { value ->
+                        req.onSetDefend(value)
+                    },
+                    onDismissRequest = {
+                        dialogRequest = null
+                    }
+                )
+            }
         }
     }
 }

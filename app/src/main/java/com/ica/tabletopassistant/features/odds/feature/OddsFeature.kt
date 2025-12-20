@@ -16,14 +16,14 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ica.tabletopassistant.ui.InputNumeric
 import com.ica.tabletopassistant.ui.PngIcon
-import com.ica.tabletopassistant.features.calculator.CalculatorDialog
+import com.ica.tabletopassistant.features.calculator.CalculatorDialogType
 import com.ica.tabletopassistant.ui.theme.TabletopAssistantTheme
 
 @Composable
 fun OddsFeature(
         modifier: Modifier = Modifier,
         viewModel: OddsFeatureViewModel = hiltViewModel(),
-        showDialog: (initial: Float, onSetAttack: (Float) -> Unit, onSetDefend: (Float) -> Unit) -> Unit
+        showDialog: (type: CalculatorDialogType, isRounded: Boolean, roundingMode: Int, initial: Float, onSetAttack: (Float) -> Unit, onSetDefend: (Float) -> Unit) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -33,7 +33,7 @@ fun OddsFeature(
         onUpdateAttack = viewModel::setAttack,
         onUpdateDefend = viewModel::setDefend,
         onShowCacluator = {
-            showDialog(/*uiState.attack*/0f, { viewModel.setAttack(it.toString()) }, { viewModel.setDefend(it.toString()) })
+            showDialog(CalculatorDialogType.Odds, uiState.isRounded, uiState.roundingMode, /*uiState.attack*/0f, { viewModel.setAttack(it.toString()) }, { viewModel.setDefend(it.toString()) })
         }
 
     )
@@ -173,8 +173,10 @@ fun PreviewOddsFeature() {
             }
         )
         if (isCalculatorDialogOpen) {
-            CalculatorDialog(
+            OddsCalculatorDialog(
                 Modifier.fillMaxSize(),
+                isRounded =  previewState.isRounded,
+                roundingMode = previewState.roundingMode,
                 onSetAttack = { attack ->
                     previewState = previewState.copy(
                         attack = attack.toString(),
